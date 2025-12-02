@@ -32,19 +32,32 @@ void drawCircleMidpoint(int cx, int cy, int r) {
 
 // Manual Bresenham Line Algorithm
 void drawLineBresenham(int x1, int y1, int x2, int y2) {
-    int dx = abs(x2 - x1);
-    int dy = abs(y2 - y1);
-    int sx = (x1 < x2) ? 1 : -1;
-    int sy = (y1 < y2) ? 1 : -1;
-    int err = dx - dy;
+    int dx = x2 - x1;
+    int dy = y2 - y1;
+
+    int x = x1;
+    int y = y1;
+    int p = 2 * dy - dx;   // decision parameter
 
     glBegin(GL_POINTS);
-    while (true) {
-        glVertex2i(x1, y1);
-        if (x1 == x2 && y1 == y2) break;
-        int e2 = 2 * err;
-        if (e2 > -dy) { err -= dy; x1 += sx; }
-        if (e2 < dx)  { err += dx; y1 += sy; }
+
+    // First pixel
+    glVertex2i(x, y);
+
+    // Loop for all remaining pixels
+    while (x < x2) {
+        x = x + 1;         // always move right
+
+        if (p < 0) {
+            p = p + 2 * dy;
+        }
+        else {
+            y = y + 1;     // move up
+            p = p + 2 * dy - 2 * dx;
+        }
+
+        glVertex2i(x, y);  // plot current pixel
     }
+
     glEnd();
 }
